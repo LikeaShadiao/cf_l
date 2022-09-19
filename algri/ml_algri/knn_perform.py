@@ -21,7 +21,7 @@ def knn(in_x, x_labels, y_labels, k):
 
 if __name__ == '__main__':
     group, labels = DataSet()
-    test_x = [80, 22]
+    test_x = [53, 55]
     print('输入数据对应的类型是: {}'.format(knn(test_x, group, labels, 3)))
 
 

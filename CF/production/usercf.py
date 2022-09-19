@@ -8,19 +8,19 @@ import math
 import operator
 
 
-def transfer_user_click(user_click):
+def transfer_user_click(user_click):#输入是个字典，是"get_user_click"返回值里的第一个参数
     """
     get item by user_click
     :param user_click: key userid, value: [itemid1, itemid2]
     :return: dict, key itemid value:[userid1, userid2]
     """
-    item_click_by_user = {}#被用户点击过的产品的链表构造
+    item_click_by_user = {}#被用户点击过的产品的字典构造
     for user in user_click:
-        item_list = user_click[user]
+        item_list = user_click[user]#当前user点击过的item的列表
         for itemid in item_list:
             item_click_by_user.setdefault(itemid, [])
             item_click_by_user[itemid].append(user)
-    return item_click_by_user#返回一个字典{itemid: user[]}
+    return item_click_by_user#返回一个字典{itemid: user[]}(键为item的id，值为点击过它的用户的名字)
 
 
 def base_contribution_score():
@@ -62,27 +62,28 @@ def cal_user_sim(item_click_by_user, user_click_time):
     """
     co_appear = {}
     user_click_count = {}
-    for itemid, user_list in item_click_by_user.items():
-        for index_i in range(len(user_list)):
-            user_i = user_list[index_i]
+    for itemid, user_list in item_click_by_user.items():# "item_click_by_user"是一个字典{itemid: user[]}(键为item的id，值为点击过它的用户的名字)
+        for index_i in range(len(user_list)):#user_list 是点击过对应itemid的用户的列表
+            user_i = user_list[index_i]# "user_i" 是上面用户列表中按索引得到的元素, 即用户名
             user_click_count.setdefault(user_i, 0)
-            user_click_count[user_i] += 1
+            user_click_count[user_i] += 1#"user_click_count" 这个字典里键为刚提到的用户名user_i, 值为1
             if user_i + "_" + itemid not in user_click_time:
                 click_time_one = 0
             else:
-                click_time_one = user_click_time[user_i + "_" + itemid]
+                click_time_one = user_click_time[user_i + "_" + itemid]# 赋值，表示用户的点击次数
             for index_j in range(index_i, len(user_list)):
                 user_j = user_list[index_j]
                 if user_j + "_" + itemid not in user_click_time:
                     click_time_two = 0
                 else:
-                    click_time_two = user_click_time[user_j + "_" + itemid]
+                    click_time_two = user_click_time[user_j + "_" + itemid]#赋值，得到用户的点击次数（另一个的）
                 co_appear.setdefault(user_i, {})
                 co_appear[user_i].setdefault(user_j, 0)
                 co_appear[user_i][user_j] += update_two_contribution_score(click_time_one, click_time_two)
                 co_appear.setdefault(user_j, {})
                 co_appear[user_j].setdefault(user_i, 0)
                 co_appear[user_j][user_i] += update_two_contribution_score(click_time_one, click_time_two)
+                #分别在i，j的循环里为字典co_appear赋值，键为二位数组形式，值为对应二者的一个运算结果
 
     user_sim_info = {}
     user_sim_info_sorted = {}
